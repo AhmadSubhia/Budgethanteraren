@@ -19,7 +19,12 @@ public class Main {
         BudgetService budgetService = new BudgetService(repository);
         FileService fileService = new FileService();
 
-        loadAtStartup(fileService, budgetService);
+        boolean dataLoaded = loadAtStartup(fileService, budgetService);
+
+        if (!dataLoaded) {
+            System.out.println("Application stopped to protect your saved data.");
+            return;
+        }
 
         try (Scanner scanner = new Scanner(System.in)) {
 
@@ -201,7 +206,14 @@ public class Main {
             System.out.println("No matching transactions.");
             return;
         }
-        transactions.forEach(System.out::println);
+        transactions.stream()
+                .sorted(Comparator.comparing(Transaction::date))
+                .forEach(transaction ->
+                        System.out.printf("%s | %s | %.2f | %s%n",
+                                transaction.date(),
+                                transaction.category(),
+                                transaction.amount(),
+                                transaction.type()));
     }
 
     private static void saveTransactions(
