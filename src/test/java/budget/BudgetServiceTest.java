@@ -106,4 +106,23 @@ class BudgetServiceTest {
         BudgetService service = new BudgetService(repository);
         assertThrows(InvalidTransactionException.class, () -> service.addTransaction(null));
     }
+    @Test
+    void shouldThrowExceptionWhenAmountIsNotFinite() {
+        Repository<Transaction> repository = new Repository<>();
+        BudgetService service = new BudgetService(repository);
+
+        Transaction transaction = new Transaction(
+                LocalDate.of(2026, 10, 19),
+                "Mat",
+                Double.NaN,
+                TransactionType.UTGIFT
+        );
+
+        assertThrows(
+                InvalidTransactionException.class,
+                () -> service.addTransaction(transaction)
+        );
+
+        assertEquals(0, repository.size());
+    }
 }

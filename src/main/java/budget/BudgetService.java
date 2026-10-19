@@ -22,18 +22,16 @@ public class BudgetService {
         if (transaction.category() == null ||
                 transaction.category().isBlank()) {
 
-            throw new InvalidTransactionException(
-                    "Category cannot be empty");
+            throw new InvalidTransactionException("Category cannot be empty");
         }
 
-        if (transaction.amount() < 0) {
-            throw new InvalidTransactionException(
-                    "Amount cannot be negative");
+        if (!Double.isFinite(transaction.amount()) || transaction.amount() < 0) {
+            throw new InvalidTransactionException("Amount must be finite and non-negative");
+
         }
 
         if (transaction.type() == null) {
-            throw new InvalidTransactionException(
-                    "Transaction type cannot be null");
+            throw new InvalidTransactionException("Transaction type cannot be null");
         }
 
         repository.add(transaction);
